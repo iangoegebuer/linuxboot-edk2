@@ -1,0 +1,13 @@
+# This provides a skeleton module for LinuxBoot. Replace kernel.efi on this
+# folder with a Linux kernel of your own.
+#
+#Please refer to ReadMeLinuxBoot.md for more information.
+#
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Linux
+  FILE_GUID                      = 7C04A583-9E3E-4f1c-AD65-E05268D0B4D1
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+[Binaries.X64]
+  PE32|kernel.efi|*

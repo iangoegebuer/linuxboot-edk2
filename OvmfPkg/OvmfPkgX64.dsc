@@ -36,6 +36,14 @@
 !include OvmfPkg/OvmfTpmDefines.dsc.inc
 
   #
+  # BIOS Shell Selection:
+  # Set LINUXBOOT_ENABLE on the command line to use Linuxboot
+  # instead of building with an UEFI Shell.
+  # Default behavior will build a BIOS with an UEFI Shell.
+  #
+  DEFINE LINUXBOOT_ENABLE = FALSE
+
+  #
   # Network definition
   #
   DEFINE NETWORK_TLS_ENABLE             = FALSE
@@ -975,7 +983,7 @@
   OvmfPkg/Csm/Csm16/Csm16.inf
 !endif
 
-!if $(TOOL_CHAIN_TAG) != "XCODE5"
+!if $(TOOL_CHAIN_TAG) != "XCODE5" && $(LINUXBOOT_ENABLE) != TRUE
   ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf {
     <PcdsFixedAtBuild>
       gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
@@ -989,6 +997,12 @@
       gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
   }
 !endif
+
+#Please refer to ReadMeLinuxBoot.md for more information on enabling LinuxBoot
+!if $(LINUXBOOT_ENABLE) == TRUE
+  # Replace UEFI Shell with Linuxboot
+  LinuxBoot/kernel.inf
+!else
   ShellPkg/Application/Shell/Shell.inf {
     <LibraryClasses>
       ShellCommandLib|ShellPkg/Library/UefiShellCommandLib/UefiShellCommandLib.inf
@@ -1011,6 +1025,7 @@
       gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
       gEfiMdePkgTokenSpaceGuid.PcdUefiLibMaxPrintBufferSize|8000
   }
+!endif
 
 !if $(SECURE_BOOT_ENABLE) == TRUE
   SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
