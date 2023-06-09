@@ -81,6 +81,13 @@
 !endif
 
   #
+  # Create a larger image (16MB) to allow for modification of the OVMF flash file post build.
+  #
+  # E.g using Fiano UTK Tool to replace UEFI Shell with Linuxboot.
+  #
+  DEFINE FD_16MB_IMAGE           = FALSE
+  
+  #
   # Define the FILE_GUID of CpuMpPei/CpuDxe for unique-processor version.
   #
   DEFINE UP_CPU_PEI_GUID  = 280251c4-1d09-4035-9062-839acb5f18c1

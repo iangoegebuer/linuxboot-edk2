@@ -55,7 +55,7 @@ DEFINE SECFV_SIZE        = 0x34000
 #
 # The UEFI Shell is smaller in size than Linuxboot.
 #
-!if $(FD_SIZE_IN_KB) == 4096 && $(LINUXBOOT_ENABLE) == FALSE
+!if $(FD_SIZE_IN_KB) == 4096 && $(LINUXBOOT_ENABLE) == FALSE && $(FD_16MB_IMAGE) == FALSE
 DEFINE VARS_SIZE         = 0x84000
 DEFINE VARS_BLOCKS       = 0x84
 DEFINE VARS_LIVE_SIZE    = 0x40000
@@ -77,9 +77,12 @@ DEFINE SECFV_SIZE        = 0x034000
 !endif
 
 #
-# Increase firmware size to fit Linuxboot.
+# Increase firmware size to fit Linuxboot or allow for modification
+# of the OVMF flash file post-build.
 #
-!if $(FD_SIZE_IN_KB) == 4096 && $(LINUXBOOT_ENABLE) == TRUE
+# E.g using UTK Fiano Tool to replace the UEFI Shell with Linuxboot.
+#
+!if $(FD_SIZE_IN_KB) == 4096 && ($(LINUXBOOT_ENABLE) == TRUE || $(FD_16MB_IMAGE) == TRUE)
 DEFINE VARS_SIZE         = 0x84000
 DEFINE VARS_BLOCKS       = 0x84
 DEFINE VARS_LIVE_SIZE    = 0x40000

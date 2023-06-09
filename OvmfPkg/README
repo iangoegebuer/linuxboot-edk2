@@ -336,6 +336,10 @@ FD_SIZE_1MB, FD_SIZE_2MB, FD_SIZE_4MB build defines). The base address for the
 1MB image in QEMU physical memory is 0xfff00000. The base address for the 2MB
 image is 0xffe00000. The base address for the 4MB image is 0xffc00000.
 
+OVMF now also supports a 16MB flash image when building OVMF+Linuxboot or when
+the FD_16_MB_Image flag (see the DSC file) is used during the OVMF Image build.
+The base adress for the 16 MB Image is 0xFEC00000.
+
 Using the 1MB or 2MB image, the layout of the firmware device in memory looks
 like:
 
