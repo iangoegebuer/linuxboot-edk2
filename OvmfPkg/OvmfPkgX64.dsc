@@ -86,7 +86,12 @@
   # E.g using Fiano UTK Tool to replace UEFI Shell with Linuxboot.
   #
   DEFINE FD_16MB_IMAGE           = FALSE
-  
+
+  #
+  #Enable Performance Library to measure Boot Times
+  #
+  DEFINE PERFORMANCE_MEASUREMENT_ENABLE  = FALSE
+
   #
   # Define the FILE_GUID of CpuMpPei/CpuDxe for unique-processor version.
   #
@@ -314,6 +319,9 @@
 !else
   DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
 !endif
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+   PerformanceLib|MdeModulePkg/Library/PeiPerformanceLib/PeiPerformanceLib.inf
+!endif
   PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
 
 [LibraryClasses.common.PEIM]
@@ -342,6 +350,9 @@
   PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
   QemuFwCfgLib|OvmfPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
   PlatformInitLib|OvmfPkg/Library/PlatformInitLib/PlatformInitLib.inf
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+   PerformanceLib|MdeModulePkg/Library/PeiPerformanceLib/PeiPerformanceLib.inf
+!endif
 
 !include OvmfPkg/OvmfTpmLibsPeim.dsc.inc
 
@@ -363,6 +374,9 @@
 !endif
   CpuExceptionHandlerLib|UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib.inf
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  PerformanceLib|MdeModulePkg/Library/DxeCorePerformanceLib/DxeCorePerformanceLib.inf
+!endif
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -385,6 +399,9 @@
 !if $(SMM_REQUIRE) == TRUE
   MmUnblockMemoryLib|MdePkg/Library/MmUnblockMemoryLib/MmUnblockMemoryLibNull.inf
 !endif
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  PerformanceLib|MdeModulePkg/Library/DxeCorePerformanceLib/DxeCorePerformanceLib.inf
+!endif
 
 [LibraryClasses.common.UEFI_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -401,6 +418,10 @@
 !endif
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   PciLib|OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35.inf
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
+!endif
+
 
 [LibraryClasses.common.DXE_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -431,6 +452,9 @@
   MpInitLib|UefiCpuPkg/Library/MpInitLib/DxeMpInitLib.inf
   QemuFwCfgS3Lib|OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg.inf
   QemuLoadImageLib|OvmfPkg/Library/X86QemuLoadImageLib/X86QemuLoadImageLib.inf
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
+!endif
 
 !include OvmfPkg/OvmfTpmLibsDxe.dsc.inc
 
@@ -447,6 +471,9 @@
   DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
 !endif
   PciLib|OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35.inf
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  DxePerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
+!endif
 
 [LibraryClasses.common.DXE_SMM_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -470,6 +497,9 @@
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/SmmCryptLib.inf
   PciLib|OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35.inf
   SmmCpuRendezvousLib|UefiCpuPkg/Library/SmmCpuRendezvousLib/SmmCpuRendezvousLib.inf
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  PerformanceLib|MdeModulePkg/Library/SmmPerformanceLib/SmmPerformanceLib.inf
+!endif
 
 [LibraryClasses.common.SMM_CORE]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -487,6 +517,9 @@
   DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
 !endif
   PciLib|OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35.inf
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  PerformanceLib|MdeModulePkg/Library/SmmCorePerformanceLib/SmmCorePerformanceLib.inf
+!endif
 
 ################################################################################
 #
@@ -569,6 +602,12 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 !else
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2F
+!endif
+
+!if $(PERFORMANCE_MEASUREMENT_ENABLE) == TRUE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdEdkiiFpdtStringRecordEnableOnly| TRUE
+  gEfiMdePkgTokenSpaceGuid.PcdPerformanceLibraryPropertyMask|0x01
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxPeiPerformanceLogEntries|80
 !endif
 
   # This PCD is used to set the base address of the PCI express hierarchy. It
@@ -725,6 +764,12 @@
   #
   # PEI Phase modules
   #
+  MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTablePei/FirmwarePerformancePei.inf {
+    <LibraryClasses>
+      !if $(SMM_REQUIRE) == TRUE
+        LockBoxLib|MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxPeiLib.inf
+      !endif
+  }
   MdeModulePkg/Core/Pei/PeiMain.inf
   MdeModulePkg/Universal/PCD/Pei/Pcd.inf  {
     <LibraryClasses>
@@ -781,6 +826,7 @@
   #
   # DXE Phase modules
   #
+  MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTableDxe/FirmwarePerformanceDxe.inf
   MdeModulePkg/Core/Dxe/DxeMain.inf {
     <LibraryClasses>
       NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
@@ -991,6 +1037,10 @@
 !endif
 
 !if $(TOOL_CHAIN_TAG) != "XCODE5" && $(LINUXBOOT_ENABLE) != TRUE
+  ShellPkg/DynamicCommand/DpDynamicCommand/DpDynamicCommand.inf {
+    <PcdsFixedAtBuild>
+      gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
+  }
   ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf {
     <PcdsFixedAtBuild>
       gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
@@ -1052,6 +1102,12 @@
   OvmfPkg/SmmAccess/SmmAccess2Dxe.inf
   OvmfPkg/SmmControl2Dxe/SmmControl2Dxe.inf
   OvmfPkg/CpuS3DataDxe/CpuS3DataDxe.inf
+  MdeModulePkg/Universal/ReportStatusCodeRouter/Smm/ReportStatusCodeRouterSmm.inf
+  MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTableSmm/FirmwarePerformanceSmm.inf{
+    <LibraryClasses>
+      LockBoxLib|MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxSmmLib.inf
+  }
+
 
   #
   # SMM Initial Program Load (a DXE_RUNTIME_DRIVER)
