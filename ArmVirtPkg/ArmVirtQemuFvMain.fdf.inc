@@ -40,9 +40,9 @@ READ_LOCK_STATUS   = TRUE
 
   INF MdeModulePkg/Core/Dxe/DxeMain.inf
   INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
-  INF ArmVirtPkg/VirtioFdtDxe/VirtioFdtDxe.inf
-  INF ArmVirtPkg/FdtClientDxe/FdtClientDxe.inf
-  INF ArmVirtPkg/HighMemDxe/HighMemDxe.inf
+  INF OvmfPkg/Fdt/VirtioFdtDxe/VirtioFdtDxe.inf
+  INF EmbeddedPkg/Drivers/FdtClientDxe/FdtClientDxe.inf
+  INF OvmfPkg/Fdt/HighMemDxe/HighMemDxe.inf
 
   #
   # PI DXE Drivers producing Architectural Protocols (EFI Services)
@@ -73,7 +73,7 @@ READ_LOCK_STATUS   = TRUE
 
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
   INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
-  INF ArmPlatformPkg/Drivers/NorFlashDxe/NorFlashDxe.inf
+  INF OvmfPkg/VirtNorFlashDxe/VirtNorFlashDxe.inf
   INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
 
   #
@@ -98,10 +98,8 @@ READ_LOCK_STATUS   = TRUE
   INF OvmfPkg/VirtioNetDxe/VirtioNet.inf
   INF OvmfPkg/VirtioScsiDxe/VirtioScsi.inf
   INF OvmfPkg/VirtioRngDxe/VirtioRng.inf
+  INF OvmfPkg/VirtioSerialDxe/VirtioSerial.inf
 
-  #
-  # UEFI application (Shell Embedded Boot Loader)
-  #
   INF ShellPkg/Application/Shell/Shell.inf
   INF ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
   INF ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand.inf
@@ -144,16 +142,11 @@ READ_LOCK_STATUS   = TRUE
   #
   # ACPI Support
   #
-  INF ArmVirtPkg/PlatformHasAcpiDtDxe/PlatformHasAcpiDtDxe.inf
+  INF OvmfPkg/PlatformHasAcpiDtDxe/PlatformHasAcpiDtDxe.inf
 !if $(ARCH) == AARCH64
   INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   INF MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
-  INF OvmfPkg/AcpiPlatformDxe/QemuFwCfgAcpiPlatformDxe.inf
-
-  #
-  # EBC support
-  #
-  INF MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
+  INF OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe.inf
 !endif
 
   #

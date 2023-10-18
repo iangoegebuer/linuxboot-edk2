@@ -1,7 +1,7 @@
 #  @file
 #  Workspace file for KVMTool virtual platform.
 #
-#  Copyright (c) 2018 - 2021, ARM Limited. All rights reserved.
+#  Copyright (c) 2018 - 2023, Arm Limited. All rights reserved.
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -27,7 +27,14 @@
   SKUID_IDENTIFIER               = DEFAULT
   FLASH_DEFINITION               = ArmVirtPkg/ArmVirtKvmTool.fdf
 
+[Defines.AARCH64]
+  DEFINE ACPIVIEW_ENABLE         = TRUE
+
 !include ArmVirtPkg/ArmVirt.dsc.inc
+
+!if $(ARCH) == AARCH64
+!include DynamicTablesPkg/DynamicTables.dsc.inc
+!endif
 
 !include MdePkg/MdeLibs.dsc.inc
 
@@ -43,7 +50,7 @@
   ArmVirtMemInfoLib|ArmVirtPkg/Library/KvmtoolVirtMemInfoLib/KvmtoolVirtMemInfoLib.inf
 
   TimerLib|ArmPkg/Library/ArmArchTimerLib/ArmArchTimerLib.inf
-  NorFlashPlatformLib|ArmVirtPkg/Library/NorFlashKvmtoolLib/NorFlashKvmtoolLib.inf
+  VirtNorFlashPlatformLib|ArmVirtPkg/Library/NorFlashKvmtoolLib/NorFlashKvmtoolLib.inf
 
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
 
@@ -57,9 +64,9 @@
 
   FileExplorerLib|MdeModulePkg/Library/FileExplorerLib/FileExplorerLib.inf
 
-  PciPcdProducerLib|ArmVirtPkg/Library/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+  PciPcdProducerLib|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
   PciSegmentLib|MdePkg/Library/BasePciSegmentLibPci/BasePciSegmentLibPci.inf
-  PciHostBridgeLib|ArmVirtPkg/Library/FdtPciHostBridgeLib/FdtPciHostBridgeLib.inf
+  PciHostBridgeLib|OvmfPkg/Fdt/FdtPciHostBridgeLib/FdtPciHostBridgeLib.inf
   PciHostBridgeUtilityLib|ArmVirtPkg/Library/ArmVirtPciHostBridgeUtilityLib/ArmVirtPciHostBridgeUtilityLib.inf
 
   TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
@@ -70,6 +77,12 @@
   PciExpressLib|MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
   PlatformHookLib|ArmVirtPkg/Library/Fdt16550SerialPortHookLib/Fdt16550SerialPortHookLib.inf
   SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+
+  HwInfoParserLib|DynamicTablesPkg/Library/FdtHwInfoParserLib/FdtHwInfoParserLib.inf
+  DynamicPlatRepoLib|DynamicTablesPkg/Library/Common/DynamicPlatRepoLib/DynamicPlatRepoLib.inf
+
+  ArmMonitorLib|ArmPkg/Library/ArmMonitorLib/ArmMonitorLib.inf
+  ArmTrngLib|ArmPkg/Library/ArmTrngLib/ArmTrngLib.inf
 
 [LibraryClasses.common.SEC, LibraryClasses.common.PEI_CORE, LibraryClasses.common.PEIM]
   PciExpressLib|MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
@@ -101,6 +114,8 @@
 
   # Use MMIO for accessing RTC controller registers.
   gPcAtChipsetPkgTokenSpaceGuid.PcdRtcUseMmio|TRUE
+
+  gArmTokenSpaceGuid.PcdMonitorConduitHvc|TRUE
 
 [PcdsFixedAtBuild.common]
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000000F
@@ -160,13 +175,15 @@
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase|0x0
 
-[PcdsDynamicDefault.common]
-  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|3
+[PcdsDynamicHii]
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|L"Timeout"|gEfiGlobalVariableGuid|0x0|5
 
+[PcdsDynamicDefault.common]
   gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|0x0
   gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|0x0
   gArmTokenSpaceGuid.PcdArmArchTimerVirtIntrNum|0x0
   gArmTokenSpaceGuid.PcdArmArchTimerHypIntrNum|0x0
+  gArmTokenSpaceGuid.PcdArmArchTimerHypVirtIntrNum|0x0
 
   #
   # ARM General Interrupt Controller
@@ -184,7 +201,7 @@
   # PCD and PcdPciDisableBusEnumeration above have not been assigned yet
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xFFFFFFFFFFFFFFFF
 
-  gArmTokenSpaceGuid.PcdPciIoTranslation|0x0
+  gEfiMdePkgTokenSpaceGuid.PcdPciIoTranslation|0x0
 
   #
   # Set video resolution for boot options and for text setup.
@@ -195,9 +212,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|640
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|480
 
-  ## Force DTB
-  gArmVirtTokenSpaceGuid.PcdForceNoAcpi|TRUE
-
   # Setup Flash storage variables
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize|0x40000
@@ -205,6 +219,10 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize|0x40000
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize|0x40000
+
+  # Define PCD for emulating Runtime Variable storage when
+  # CFI flash is absent.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|FALSE
 
   ## RTC Register address in MMIO space.
   gPcAtChipsetPkgTokenSpaceGuid.PcdRtcIndexRegister64|0x0
@@ -283,17 +301,24 @@
       NULL|ArmVirtPkg/Library/ArmVirtTimerFdtClientLib/ArmVirtTimerFdtClientLib.inf
   }
 
-  ArmPlatformPkg/Drivers/NorFlashDxe/NorFlashDxe.inf
+  OvmfPkg/VirtNorFlashDxe/VirtNorFlashDxe.inf {
+    <LibraryClasses>
+      # don't use unaligned CopyMem () on the UEFI varstore NOR flash region
+      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+  }
 
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
 
   #
   # Platform Driver
   #
-  ArmVirtPkg/KvmtoolPlatformDxe/KvmtoolPlatformDxe.inf
-  ArmVirtPkg/VirtioFdtDxe/VirtioFdtDxe.inf
-  ArmVirtPkg/FdtClientDxe/FdtClientDxe.inf
-  ArmVirtPkg/HighMemDxe/HighMemDxe.inf
+  ArmVirtPkg/KvmtoolPlatformDxe/KvmtoolPlatformDxe.inf {
+    <LibraryClasses>
+    NULL|ArmVirtPkg/Library/NorFlashKvmtoolLib/NorFlashKvmtoolLib.inf
+  }
+  OvmfPkg/Fdt/VirtioFdtDxe/VirtioFdtDxe.inf
+  EmbeddedPkg/Drivers/FdtClientDxe/FdtClientDxe.inf
+  OvmfPkg/Fdt/HighMemDxe/HighMemDxe.inf
   OvmfPkg/VirtioBlkDxe/VirtioBlk.inf
   OvmfPkg/VirtioScsiDxe/VirtioScsi.inf
   OvmfPkg/VirtioNetDxe/VirtioNet.inf
@@ -338,18 +363,30 @@
   #
   ArmPkg/Drivers/ArmPciCpuIo2Dxe/ArmPciCpuIo2Dxe.inf {
     <LibraryClasses>
-      NULL|ArmVirtPkg/Library/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
-      NULL|ArmVirtPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
+      NULL|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+      NULL|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
   }
   MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf {
     <LibraryClasses>
-      NULL|ArmVirtPkg/Library/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
-      NULL|ArmVirtPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
+      NULL|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+      NULL|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
   }
   MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf {
     <LibraryClasses>
-      NULL|ArmVirtPkg/Library/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
-      NULL|ArmVirtPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
+      NULL|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+      NULL|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
   }
   OvmfPkg/VirtioPciDeviceDxe/VirtioPciDeviceDxe.inf
   OvmfPkg/Virtio10Dxe/Virtio10.inf
+
+  #
+  # Rng Support
+  #
+  SecurityPkg/RandomNumberGenerator/RngDxe/RngDxe.inf
+
+!if $(ARCH) == AARCH64
+  #
+  # ACPI Support
+  #
+  ArmVirtPkg/KvmtoolCfgMgrDxe/ConfigurationManagerDxe.inf
+!endif

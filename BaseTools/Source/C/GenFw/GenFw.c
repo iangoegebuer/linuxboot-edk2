@@ -6,8 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-#include "WinNtInclude.h"
-
 #ifndef __GNUC__
 #include <windows.h>
 #include <io.h>
@@ -28,9 +26,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Acpi Table definition
 //
 #include <IndustryStandard/Acpi.h>
-#include <IndustryStandard/Acpi1_0.h>
-#include <IndustryStandard/Acpi2_0.h>
-#include <IndustryStandard/Acpi3_0.h>
+#include <IndustryStandard/Acpi10.h>
+#include <IndustryStandard/Acpi20.h>
+#include <IndustryStandard/Acpi30.h>
 #include <IndustryStandard/MemoryMappedConfigurationSpaceAccessTable.h>
 
 #include "CommonLib.h"
@@ -87,7 +85,7 @@ UINT32 mImageTimeStamp = 0;
 UINT32 mImageSize = 0;
 UINT32 mOutImageType = FW_DUMMY_IMAGE;
 BOOLEAN mIsConvertXip = FALSE;
-
+BOOLEAN mExportFlag = FALSE;
 
 STATIC
 EFI_STATUS
@@ -279,6 +277,10 @@ Returns:
                         except for -o or -r option. It is a action option.\n\
                         If it is combined with other action options, the later\n\
                         input action option will override the previous one.\n");
+  fprintf (stdout, "  --prm                 Scan symbol section from ELF image and \n\
+                        write export table into PE-COFF.\n\
+                        This option can be used together with -e.\n\
+                        It doesn't work for other options.\n");
   fprintf (stdout, "  -v, --verbose         Turn on verbose output with informational messages.\n");
   fprintf (stdout, "  -q, --quiet           Disable all messages except key message and fatal error\n");
   fprintf (stdout, "  -d, --debug level     Enable debug messages, at input debug level.\n");
@@ -366,7 +368,7 @@ Returns:
     if (Facs->Version > EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) {
       break;
     }
-    if ((Facs->Version != EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) &&
+    if ((Facs->Version != 0 /* field is reserved in ACPI 1.0 */) &&
         (Facs->Version != EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) &&
         (Facs->Version != EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION)){
       Error (NULL, 0, 3000, "Invalid", "FACS version check failed.");
@@ -1436,6 +1438,20 @@ Returns:
       continue;
     }
 
+    if (stricmp (argv[0], "--prm") == 0) {
+      if (stricmp (ModuleType, "DXE_RUNTIME_DRIVER") != 0 ){
+        Error (NULL, 0, 1001, "Invalid", "--prm option only supports DXE RUNTIME driver.");
+        goto Finish;
+      }
+
+      if (!mExportFlag) {
+        mExportFlag = TRUE;
+      }
+      argc --;
+      argv ++;
+      continue;
+    }
+
     if (argv[0][0] == '-') {
       Error (NULL, 0, 1000, "Unknown option", argv[0]);
       goto Finish;
@@ -2181,12 +2197,6 @@ Returns:
     }
   }
 
-  if (PeHdr->Pe32.FileHeader.Machine == IMAGE_FILE_MACHINE_ARM) {
-    // Some tools kick out IMAGE_FILE_MACHINE_ARM (0x1c0) vs IMAGE_FILE_MACHINE_ARMT (0x1c2)
-    // so patch back to the official UEFI value.
-    PeHdr->Pe32.FileHeader.Machine = IMAGE_FILE_MACHINE_ARMT;
-  }
-
   //
   // Set new base address into image
   //
@@ -2914,7 +2924,8 @@ Returns:
       if (mIsConvertXip) {
         DebugEntry->FileOffset = DebugEntry->RVA;
       }
-      if (ZeroDebugFlag || DebugEntry->Type != EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
+      if ((ZeroDebugFlag || DebugEntry->Type != EFI_IMAGE_DEBUG_TYPE_CODEVIEW) &&
+          (DebugEntry->Type != EFI_IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS)) {
         memset (FileBuffer + DebugEntry->FileOffset, 0, DebugEntry->SizeOfData);
         memset (DebugEntry, 0, sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY));
       }
@@ -3100,7 +3111,7 @@ Returns:
   // Get Debug, Export and Resource EntryTable RVA address.
   // Resource Directory entry need to review.
   //
-  if (FileHdr->Machine == EFI_IMAGE_MACHINE_IA32) {
+  if (FileHdr->Machine == IMAGE_FILE_MACHINE_I386) {
     Optional32Hdr = (EFI_IMAGE_OPTIONAL_HEADER32 *) ((UINT8*) FileHdr + sizeof (EFI_IMAGE_FILE_HEADER));
     SectionHeader = (EFI_IMAGE_SECTION_HEADER *) ((UINT8 *) Optional32Hdr +  FileHdr->SizeOfOptionalHeader);
     if (Optional32Hdr->NumberOfRvaAndSizes > EFI_IMAGE_DIRECTORY_ENTRY_EXPORT && \

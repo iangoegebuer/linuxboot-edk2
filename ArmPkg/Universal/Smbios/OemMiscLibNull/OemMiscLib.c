@@ -1,6 +1,7 @@
 /** @file
 *  OemMiscLib.c
 *
+*  Copyright (c) 2022, Ampere Computing LLC. All rights reserved.
 *  Copyright (c) 2021, NUVIA Inc. All rights reserved.
 *  Copyright (c) 2018, Hisilicon Limited. All rights reserved.
 *  Copyright (c) 2018, Linaro Limited. All rights reserved.
@@ -10,11 +11,12 @@
 **/
 
 #include <Uefi.h>
+#include <Guid/ZeroGuid.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HiiLib.h>
 #include <Library/OemMiscLib.h>
-
+#include <Library/PcdLib.h>
 
 /** Gets the CPU frequency of the specified processor.
 
@@ -25,7 +27,7 @@
 UINTN
 EFIAPI
 OemGetCpuFreq (
-  IN UINT8 ProcessorIndex
+  IN UINT8  ProcessorIndex
   )
 {
   ASSERT (FALSE);
@@ -45,10 +47,10 @@ OemGetCpuFreq (
 BOOLEAN
 EFIAPI
 OemGetProcessorInformation (
-  IN UINTN ProcessorIndex,
-  IN OUT PROCESSOR_STATUS_DATA *ProcessorStatus,
-  IN OUT PROCESSOR_CHARACTERISTIC_FLAGS *ProcessorCharacteristics,
-  IN OUT OEM_MISC_PROCESSOR_DATA *MiscProcessorData
+  IN UINTN                               ProcessorIndex,
+  IN OUT PROCESSOR_STATUS_DATA           *ProcessorStatus,
+  IN OUT PROCESSOR_CHARACTERISTIC_FLAGS  *ProcessorCharacteristics,
+  IN OUT OEM_MISC_PROCESSOR_DATA         *MiscProcessorData
   )
 {
   ASSERT (FALSE);
@@ -68,11 +70,11 @@ OemGetProcessorInformation (
 BOOLEAN
 EFIAPI
 OemGetCacheInformation (
-  IN UINT8   ProcessorIndex,
-  IN UINT8   CacheLevel,
-  IN BOOLEAN DataCache,
-  IN BOOLEAN UnifiedCache,
-  IN OUT SMBIOS_TABLE_TYPE7 *SmbiosCacheTable
+  IN UINT8                   ProcessorIndex,
+  IN UINT8                   CacheLevel,
+  IN BOOLEAN                 DataCache,
+  IN BOOLEAN                 UnifiedCache,
+  IN OUT SMBIOS_TABLE_TYPE7  *SmbiosCacheTable
   )
 {
   ASSERT (FALSE);
@@ -116,7 +118,7 @@ OemGetChassisType (
 BOOLEAN
 EFIAPI
 OemIsProcessorPresent (
-  IN UINTN ProcessorIndex
+  IN UINTN  ProcessorIndex
   )
 {
   ASSERT (FALSE);
@@ -132,9 +134,9 @@ OemIsProcessorPresent (
 VOID
 EFIAPI
 OemUpdateSmbiosInfo (
-  IN EFI_HII_HANDLE HiiHandle,
-  IN EFI_STRING_ID TokenToUpdate,
-  IN OEM_MISC_SMBIOS_HII_STRING_FIELD Field
+  IN EFI_HII_HANDLE                    HiiHandle,
+  IN EFI_STRING_ID                     TokenToUpdate,
+  IN OEM_MISC_SMBIOS_HII_STRING_FIELD  Field
   )
 {
   ASSERT (FALSE);
@@ -236,4 +238,48 @@ OemGetChassisNumPowerCords (
 {
   ASSERT (FALSE);
   return 1;
+}
+
+/**
+  Fetches the system UUID.
+
+  @param[out] SystemUuid     The pointer to the buffer to store the System UUID.
+
+**/
+VOID
+EFIAPI
+OemGetSystemUuid (
+  OUT GUID  *SystemUuid
+  )
+{
+  ASSERT (FALSE);
+  CopyGuid (SystemUuid, &gZeroGuid);
+}
+
+/** Fetches the BIOS release.
+
+  @return The BIOS release.
+**/
+UINT16
+EFIAPI
+OemGetBiosRelease (
+  VOID
+  )
+{
+  ASSERT (FALSE);
+  return PcdGet16 (PcdSystemBiosRelease);
+}
+
+/** Fetches the embedded controller firmware release.
+
+  @return The embedded controller firmware release.
+**/
+UINT16
+EFIAPI
+OemGetEmbeddedControllerFirmwareRelease (
+  VOID
+  )
+{
+  ASSERT (FALSE);
+  return PcdGet16 (PcdEmbeddedControllerFirmwareRelease);
 }

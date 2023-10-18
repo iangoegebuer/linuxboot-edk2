@@ -5,6 +5,7 @@
 # Copyright (c) 2011 - 2021, Arm Limited. All rights reserved.<BR>
 # Copyright (c) 2016, Linaro Ltd. All rights reserved.<BR>
 # Copyright (c) Microsoft Corporation.<BR>
+# Copyright (c) 2021, Ampere Computing LLC. All rights reserved.
 #
 #    SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -112,7 +113,6 @@
   ArmPkg/Library/DebugAgentSymbolsBaseLib/DebugAgentSymbolsBaseLib.inf
   ArmPkg/Library/DebugPeCoffExtraActionLib/DebugPeCoffExtraActionLib.inf
   ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
-  ArmPkg/Library/RvdPeCoffExtraActionLib/RvdPeCoffExtraActionLib.inf
   ArmPkg/Library/SemiHostingDebugLib/SemiHostingDebugLib.inf
   ArmPkg/Library/SemiHostingSerialPortLib/SemiHostingSerialPortLib.inf
   ArmPkg/Library/SemihostLib/SemihostLib.inf
@@ -130,9 +130,12 @@
   ArmPkg/Library/ArmGenericTimerPhyCounterLib/ArmGenericTimerPhyCounterLib.inf
   ArmPkg/Library/ArmGenericTimerVirtCounterLib/ArmGenericTimerVirtCounterLib.inf
 
+  ArmPkg/Library/ArmTrngLib/ArmTrngLib.inf
+  ArmPkg/Library/ArmHvcLib/ArmHvcLib.inf
+  ArmPkg/Library/ArmHvcLibNull/ArmHvcLibNull.inf
+  ArmPkg/Library/ArmMonitorLib/ArmMonitorLib.inf
   ArmPkg/Library/ArmSmcLib/ArmSmcLib.inf
   ArmPkg/Library/ArmSmcLibNull/ArmSmcLibNull.inf
-  ArmPkg/Library/ArmHvcLib/ArmHvcLib.inf
   ArmPkg/Library/ArmSvcLib/ArmSvcLib.inf
   ArmPkg/Library/OpteeLib/OpteeLib.inf
 
@@ -150,6 +153,7 @@
   ArmPkg/Library/ArmSmcPsciResetSystemLib/ArmSmcPsciResetSystemLib.inf
   ArmPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
   ArmPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+  ArmPkg/Library/LinuxBootBootManagerLib/LinuxBootBootManagerLib.inf
 
   ArmPkg/Drivers/ArmCrashDumpDxe/ArmCrashDumpDxe.inf
   ArmPkg/Drivers/ArmScmiDxe/ArmScmiDxe.inf
@@ -158,7 +162,12 @@
   ArmPkg/Universal/Smbios/SmbiosMiscDxe/SmbiosMiscDxe.inf
   ArmPkg/Universal/Smbios/OemMiscLibNull/OemMiscLibNull.inf
 
+  ArmPkg/Drivers/MmCommunicationPei/MmCommunicationPei.inf
+
 [Components.AARCH64]
+  ArmPkg/Drivers/ArmPsciMpServicesDxe/ArmPsciMpServicesDxe.inf
   ArmPkg/Drivers/MmCommunicationDxe/MmCommunication.inf
   ArmPkg/Library/ArmMmuLib/ArmMmuPeiLib.inf
+
+[Components.AARCH64, Components.ARM]
   ArmPkg/Library/StandaloneMmMmuLib/ArmMmuStandaloneMmLib.inf

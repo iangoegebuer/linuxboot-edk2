@@ -23,10 +23,10 @@ AArch64DataCacheOperation (
   IN  AARCH64_CACHE_OPERATION  DataCacheOperation
   )
 {
-  UINTN     SavedInterruptState;
+  UINTN  SavedInterruptState;
 
   SavedInterruptState = ArmGetInterruptState ();
-  ArmDisableInterrupts();
+  ArmDisableInterrupts ();
 
   AArch64AllDataCachesOperation (DataCacheOperation);
 
@@ -99,8 +99,23 @@ ArmHasCcidx (
   VOID
   )
 {
-  UINTN Mmfr2;
+  UINTN  Mmfr2;
 
   Mmfr2 = ArmReadIdAA64Mmfr2 ();
   return (((Mmfr2 >> 20) & 0xF) == 1) ? TRUE : FALSE;
+}
+
+/**
+  Checks whether the CPU implements the Virtualization Host Extensions.
+
+  @retval TRUE  FEAT_VHE is implemented.
+  @retval FALSE FEAT_VHE is not mplemented.
+**/
+BOOLEAN
+EFIAPI
+ArmHasVhe (
+  VOID
+  )
+{
+  return ((ArmReadIdAA64Mmfr1 () & AARCH64_MMFR1_VH) != 0);
 }

@@ -24,15 +24,20 @@
 #
 
 [Sources]
+  CloudHv.c
+  EntryPoint.c
   Qemu.c
   SmbiosPlatformDxe.c
   SmbiosPlatformDxe.h
 
 [Packages]
   MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
   OvmfPkg/OvmfPkg.dec
 
 [LibraryClasses]
+  BaseLib
+  BaseMemoryLib
   DebugLib
   MemoryAllocationLib
   PcdLib
@@ -41,7 +46,11 @@
   UefiDriverEntryPoint
 
 [Pcd]
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfHostBridgePciDevId
   gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareReleaseDateString
 
 [Protocols]
   gEfiSmbiosProtocolGuid                      # PROTOCOL ALWAYS_CONSUMED

@@ -1,7 +1,7 @@
 /** @file
   Early Platform Hook Library instance for 16550 Uart.
 
-  Copyright (c) 2020, ARM Ltd. All rights reserved.<BR>
+  Copyright (c) 2020 - 2023, Arm Ltd. All rights reserved.<BR>
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
@@ -55,7 +55,7 @@ GetSerialConsolePortAddress (
     return EFI_INVALID_PARAMETER;
   }
 
-  // The "chosen" node resides at the the root of the DT. Fetch it.
+  // The "chosen" node resides at the root of the DT. Fetch it.
   ChosenNode = fdt_path_offset (Fdt, "/chosen");
   if (ChosenNode < 0) {
     return EFI_NOT_FOUND;
@@ -67,7 +67,7 @@ GetSerialConsolePortAddress (
   }
 
   // Determine the actual path length, as a colon terminates the path.
-  Path = ScanMem8 (Prop, ':', PropSize);
+  Path = ScanMem8 (Prop, PropSize, ':');
   if (Path == NULL) {
     PathLen = AsciiStrLen (Prop);
   } else {
@@ -83,6 +83,7 @@ GetSerialConsolePortAddress (
     if (Path == NULL) {
       return EFI_NOT_FOUND;
     }
+
     SerialConsoleNode = fdt_path_offset (Fdt, Path);
   }
 
@@ -115,9 +116,9 @@ PlatformHookSerialPortInitialize (
   VOID
   )
 {
-  RETURN_STATUS   Status;
-  VOID            *DeviceTreeBase;
-  UINT64          SerialConsoleAddress;
+  RETURN_STATUS  Status;
+  VOID           *DeviceTreeBase;
+  UINT64         SerialConsoleAddress;
 
   if (PcdGet64 (PcdSerialRegisterBase) != 0) {
     return RETURN_SUCCESS;

@@ -72,11 +72,16 @@ InvalidateInstructionCache (
 VOID *
 EFIAPI
 InvalidateInstructionCacheRange (
-  IN VOID *Address,
-  IN UINTN Length
+  IN VOID   *Address,
+  IN UINTN  Length
   )
 {
-  DEBUG((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __FUNCTION__));
+  DEBUG (
+    (DEBUG_WARN,
+     "%a:RISC-V unsupported function.\n"
+     "Invalidating the whole instruction cache instead.\n", __func__)
+    );
+  InvalidateInstructionCache ();
   return Address;
 }
 
@@ -96,7 +101,7 @@ WriteBackInvalidateDataCache (
   VOID
   )
 {
-  DEBUG((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __FUNCTION__));
+  DEBUG ((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __func__));
 }
 
 /**
@@ -128,11 +133,11 @@ WriteBackInvalidateDataCache (
 VOID *
 EFIAPI
 WriteBackInvalidateDataCacheRange (
-  IN      VOID                      *Address,
-  IN      UINTN                     Length
+  IN      VOID   *Address,
+  IN      UINTN  Length
   )
 {
-  DEBUG((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __FUNCTION__));
+  DEBUG ((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __func__));
   return Address;
 }
 
@@ -152,7 +157,7 @@ WriteBackDataCache (
   VOID
   )
 {
-  DEBUG((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __FUNCTION__));
+  DEBUG ((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __func__));
 }
 
 /**
@@ -183,11 +188,11 @@ WriteBackDataCache (
 VOID *
 EFIAPI
 WriteBackDataCacheRange (
-  IN      VOID                      *Address,
-  IN      UINTN                     Length
+  IN      VOID   *Address,
+  IN      UINTN  Length
   )
 {
-  DEBUG((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __FUNCTION__));
+  DEBUG ((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __func__));
   return Address;
 }
 
@@ -241,10 +246,10 @@ InvalidateDataCache (
 VOID *
 EFIAPI
 InvalidateDataCacheRange (
-  IN      VOID                      *Address,
-  IN      UINTN                     Length
+  IN      VOID   *Address,
+  IN      UINTN  Length
   )
 {
-  DEBUG((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __FUNCTION__));
+  DEBUG ((DEBUG_ERROR, "%a:RISC-V unsupported function.\n", __func__));
   return Address;
 }

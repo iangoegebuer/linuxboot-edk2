@@ -19,15 +19,13 @@
         "ExceptionList": [
             "8005", "UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE.UID",
             "8005", "UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE.HID",
+            "8001", "UefiSortLibUnitTestMain",
         ],
         ## Both file path and directory path are accepted.
         "IgnoreFiles": [
-            "Library/BrotliCustomDecompressLib/brotli",
-            "Universal/RegularExpressionDxe/oniguruma",
-            "Library/LzmaCustomDecompressLib/Sdk/DOC",
-            "Library/LzmaCustomDecompressLib/Sdk/C",
-            "Universal/RegularExpressionDxe/OnigurumaUefiPort.h",
-            "Universal/RegularExpressionDxe/OnigurumaUefiPort.c"
+            "Library/LzmaCustomDecompressLib",
+            "Library/BrotliCustomDecompressLib",
+            "Universal/RegularExpressionDxe"
         ]
     },
     ## options defined ci/Plugin/CompilerPlugin
@@ -83,6 +81,7 @@
         "IgnoreDuplicates": [
             "gEfiPeiMmAccessPpiGuid=gPeiSmmAccessPpiGuid",
             "gPeiSmmControlPpiGuid=gEfiPeiMmControlPpiGuid",
+            "gEfiPeiMmCommunicationPpiGuid=gEfiPeiSmmCommunicationPpiGuid",
         ]
     },
 
